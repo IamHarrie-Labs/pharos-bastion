@@ -73,12 +73,25 @@
       .pillars-grid   { grid-template-columns:1fr !important; }
       .trust-grid     { grid-template-columns:1fr 1fr !important; }
       .trust-two-col  { grid-template-columns:1fr !important; }
+      section,footer  { padding-left:28px !important; padding-right:28px !important; }
     }
     @media (max-width:640px) {
       .dec-ts, .dec-tx { display:none !important; }
-      .dec-table { grid-template-columns:60px 100px 80px 1fr !important; }
+      .dec-table { grid-template-columns:56px 96px 72px 1fr !important; }
       .hero-pad  { padding-left:20px !important; padding-right:20px !important; }
     }
+    @media (max-width:480px) {
+      section,footer  { padding-left:18px !important; padding-right:18px !important; }
+      .hero-pad       { padding-left:18px !important; padding-right:18px !important; }
+      .input-grid-2   { grid-template-columns:1fr !important; }
+      .input-field,select { font-size:16px !important; }
+      .dec-table { grid-template-columns:44px 1fr 60px !important; }
+      .dec-risk  { display:none !important; }
+      .filter-btn { padding:5px 10px !important; font-size:11px !important; }
+      .pillar-card { padding:24px 20px !important; }
+      .eval-btn   { font-size:13px !important; padding:12px !important; }
+    }
+    .footer-link.footer-active { color:#F8FAFC !important; }
   </style>
 </head>
 <body>
@@ -197,7 +210,7 @@
           <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">ID</span>
           <span class="dec-ts" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Time</span>
           <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Verdict</span>
-          <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Risk</span>
+          <span class="dec-risk" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Risk</span>
           <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Reason</span>
           <span class="dec-tx" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Transaction</span>
         </div>
@@ -256,7 +269,7 @@
                 <label id="p-to-label" style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Token Contract</label>
                 <input id="p-to" class="input-field" placeholder="0x..." value="0x7BBDa4409e300eaDB0A61F137498480c96173C9e">
               </div>
-              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+              <div class="input-grid-2" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 <div>
                   <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Action</label>
                   <select id="p-action" class="input-field" onchange="onActionChange()" style="cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239BA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;">
@@ -455,7 +468,7 @@ function rowHTML(d) {
     <span style="font-size:12.5px;font-family:'JetBrains Mono';color:#626975;font-weight:500;">#${d.id}</span>
     <span class="dec-ts" style="font-size:12px;color:#9BA3AF;font-family:'JetBrains Mono';">${d.ts}</span>
     <div><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;font-family:'JetBrains Mono';letter-spacing:.6px;color:${vc(d.verdict)};background:${vbg(d.verdict)};border:1px solid ${vb(d.verdict)};">${d.verdict}</span></div>
-    <div style="display:flex;align-items:center;gap:7px;">
+    <div class="dec-risk" style="display:flex;align-items:center;gap:7px;">
       <span style="font-size:12.5px;font-family:'JetBrains Mono';color:${rc(d.risk)};min-width:20px;">${d.risk}</span>
       <div style="width:28px;height:2px;background:rgba(0,0,0,0.08);border-radius:2px;overflow:hidden;flex-shrink:0;">
         <div style="height:100%;background:${rc(d.risk)};width:${Math.min(100,d.risk)}%;"></div>
@@ -706,6 +719,17 @@ async function runEval() {
 
 // ── Boot ──────────────────────────────────────────────────────────────────
 loadChain();
+
+// Footer active links — highlight the clicked link, clear others in the same column
+(function() {
+  const footerLinks = document.querySelectorAll('.footer-link');
+  footerLinks.forEach(a => {
+    a.addEventListener('click', () => {
+      footerLinks.forEach(l => l.classList.remove('footer-active'));
+      a.classList.add('footer-active');
+    });
+  });
+})();
 </script>
 </body>
 </html>

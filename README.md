@@ -74,19 +74,27 @@ Every decision is a structured, machine-verifiable object:
 
 ---
 
+## Deployed contracts (Pharos Atlantic)
+
+| Contract | Address |
+|---|---|
+| `GuardianPolicy` | [`0x7BBDa4409e300eaDB0A61F137498480c96173C9e`](https://atlantic.pharosscan.xyz/address/0x7BBDa4409e300eaDB0A61F137498480c96173C9e) |
+| `GuardianRegistry` | [`0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A`](https://atlantic.pharosscan.xyz/address/0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A) |
+
+Chain ID `688689` · RPC `https://atlantic.dplabs-internal.com` · Explorer `https://atlantic.pharosscan.xyz`
+
+---
+
 ## Quickstart
 
 ```bash
 npm install
-cp .env.example .env        # add a funded testnet PHAROS_PRIVATE_KEY
+cp .env.example .env        # add PHAROS_PRIVATE_KEY + deployed addresses above
 
 npm run compile             # compile contracts
-npm test                    # 11 passing contract tests
+npm test                    # 11 passing tests
 
-npm run deploy              # deploy to Pharos Atlantic → writes deployments.json
-# paste BASTION_POLICY_ADDRESS / BASTION_REGISTRY_ADDRESS into .env
-
-npm run demo                # 3 live transactions through guard() + on-chain audit trail
+npm run demo                # 3 live guard() calls + on-chain audit trail
 ```
 
 ### Run as an MCP server
@@ -105,13 +113,35 @@ Claude Desktop / any MCP client config:
       "args": ["tsx", "src/index.ts"],
       "env": {
         "PHAROS_PRIVATE_KEY": "0x…",
-        "BASTION_POLICY_ADDRESS": "0x…",
-        "BASTION_REGISTRY_ADDRESS": "0x…"
+        "BASTION_POLICY_ADDRESS": "0x7BBDa4409e300eaDB0A61F137498480c96173C9e",
+        "BASTION_REGISTRY_ADDRESS": "0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A"
       }
     }
   }
 }
 ```
+
+### Run the REST API + frontend demo
+
+```bash
+# Terminal 1 — API server (port 3457)
+npm run api
+
+# Terminal 2 — frontend (port 3456)
+npx serve frontend -p 3456
+```
+
+Open `http://localhost:3456` → scroll to **Try Bastion** → click **Evaluate Transaction**.
+
+The pre-filled scenario (unlimited ERC-20 approval) runs the full pipeline against Pharos Atlantic and returns a live DENY with simulation details, risk factors, on-chain policy reason, and a recommended fix.
+
+**REST API endpoints:**
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/guard` | Evaluate `{ from, to, value, data }` → full `GuardDecision` |
+| `GET` | `/audit` | Recent on-chain decisions from GuardianRegistry |
+| `GET` | `/health` | Status check |
 
 ---
 
