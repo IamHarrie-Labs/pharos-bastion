@@ -2,65 +2,70 @@
 name: pharos-bastion
 version: 0.1.0
 description: >-
-  Trusted execution layer for autonomous agents on Pharos. Before an agent signs
-  any on-chain action, call guard() to simulate it, score its risk, enforce an
-  on-chain spending policy, and return an explainable ALLOW / WARN / DENY verdict
-  with a recommended fix. Every decision is recorded on-chain and replayable via
-  explain(). Use whenever an agent is about to send a transaction, approve a
-  token, or move value on Pharos — especially to catch unlimited approvals,
-  reverting calls, and over-budget spends before anything is signed.
+  Trusted execution layer for autonomous agents on Pharos. Evaluates every
+  pending transaction through simulate → risk-score → on-chain policy before
+  anything is signed. Returns an explainable ALLOW / WARN / DENY verdict.
+  Every decision is permanently recorded on GuardianRegistry.
 license: MIT
-runtime: mcp
+runtime: mcp+cast
 chain:
   name: Pharos Atlantic
   chainId: 688689
-tags: [security, infrastructure, payments, agent, onchain, mcp, pharos]
+  rpc: https://atlantic.dplabs-internal.com
+  explorer: https://atlantic.pharosscan.xyz
+contracts:
+  GuardianPolicy: "0x7BBDa4409e300eaDB0A61F137498480c96173C9e"
+  GuardianRegistry: "0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A"
+tags: [security, infrastructure, agent, onchain, mcp, pharos, guard, policy, audit]
 ---
 
-# Pharos Bastion — Skill manifest
+# Pharos Bastion — Skill
 
-Bastion is an MCP skill. Connect it to any MCP-compatible agent and the tools
-below become callable. It is **composable infrastructure**: other skills/agents
-(payments, DeFi, treasury) should call `guard` before acting.
+Bastion is the **trusted execution layer for autonomous on-chain agents**. Before
+an agent signs any transaction it calls Bastion, which:
 
-## When to use this skill
+1. **Simulates** the transaction (`eth_call`) to decode intent and detect reverts
+2. **Scores risk** — names every contributing factor (unlimited approval, revert, bad target)
+3. **Checks policy** — enforces per-account spend caps, daily limits, allow/denylists on-chain
+4. **Returns a verdict** — ALLOW / WARN / DENY with a reason code and recommended fix
+5. **Logs the decision** permanently to `GuardianRegistry` for verifiable replay via `explain()`
 
-- An agent is about to **send a transaction or move value** on Pharos.
-- An agent is about to **approve an ERC-20** (Bastion flags unlimited approvals).
-- You need to **enforce spend limits / allowlists** on an autonomous agent.
-- You need an **auditable, explainable** record of why an agent acted.
+---
 
-## Core call
+## Environment
 
-`guard({ from, to, value?, data? })` → returns:
-
+```bash
+export POLICY_ADDRESS=0x7BBDa4409e300eaDB0A61F137498480c96173C9e
+export REGISTRY_ADDRESS=0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A
+export RPC_URL=https://atlantic.dplabs-internal.com
+export PRIVATE_KEY=<funded-testnet-key>
 ```
-{ decision: "ALLOW"|"WARN"|"DENY", confidence, riskScore, reason, policy,
-  factors[], simulation, recommended_fix, decisionId? }
-```
 
-`execute({ from, to, value?, data? })` does the same and then broadcasts **only
-if the verdict is not DENY**.
+---
 
-## Tools
+## Capability Index
 
-| Tool | Signs | Description |
+| User Need | Capability | Detailed Instructions |
 |---|---|---|
-| `guard` | no | Full pipeline → explainable verdict. The primitive. |
-| `simulate_transaction` | no | Decode + statically execute a tx. |
-| `assess_risk` | no | 0–100 risk score with attributable factors. |
-| `check_policy` | no | Evaluate against on-chain policy. |
-| `explain` | no | Reconstruct a past decision from the on-chain audit log. |
-| `get_audit_log` | no | Recent on-chain decisions. |
-| `get_policy` | no | Read an account's policy. |
-| `bastion_info` | no | Network / contracts / signer status. |
-| `set_policy` | yes | Configure the signer's on-chain policy. |
-| `set_target` | yes | Allow/denylist a target. |
-| `execute` | yes | Guard, log on-chain, broadcast only if not DENY. |
+| evaluate a transaction / check if this tx is safe / guard before signing / should I send this | Check a pending transaction against the on-chain policy | → [references/bastion.md#check-policy](references/bastion.md#check-policy) |
+| set spending limits / configure my agent's policy / define rules / set max value per tx / set daily limit | Configure the caller's on-chain spending policy | → [references/bastion.md#set-policy](references/bastion.md#set-policy) |
+| block an address / denylist a contract / prevent interactions with / blacklist | Add a target to the denylist | → [references/bastion.md#denylist-a-target](references/bastion.md#denylist-a-target) |
+| whitelist a protocol / allowlist a contract / trust this address / allow interactions with | Add a target to the allowlist | → [references/bastion.md#allowlist-a-target](references/bastion.md#allowlist-a-target) |
+| read my policy / what are my spending rules / show my policy / what limits do I have | Read an account's current policy | → [references/bastion.md#get-policy](references/bastion.md#get-policy) |
+| how much have I spent today / check daily spend / remaining budget / spending window | Check native value spent in the current 24h rolling window | → [references/bastion.md#check-daily-spend](references/bastion.md#check-daily-spend) |
+| is this address whitelisted / is this target allowed / check allowlist | Check if a target is on the allowlist | → [references/bastion.md#check-allowlist](references/bastion.md#check-allowlist) |
+| is this address blacklisted / is this target blocked / check denylist | Check if a target is on the denylist | → [references/bastion.md#check-denylist](references/bastion.md#check-denylist) |
+| explain decision / why was this denied / look up past verdict / audit trail / decision id | Read a specific past decision from the on-chain audit log | → [references/bastion.md#get-decision](references/bastion.md#get-decision) |
+| how many decisions / total audit log size / count decisions | Get the total number of decisions in GuardianRegistry | → [references/bastion.md#total-decisions](references/bastion.md#total-decisions) |
+| show recent decisions / query decision log / list evaluations / audit feed | Query DecisionLogged events from GuardianRegistry | → [references/bastion.md#query-decisions](references/bastion.md#query-decisions) |
+| record spend / accrue daily limit / track native spend | Record native value spent for daily-limit accounting | → [references/bastion.md#record-spend](references/bastion.md#record-spend) |
+| full pipeline guard / simulate risk policy in one call / MCP guard | Run the full Bastion pipeline via MCP (recommended for agents) | → [references/bastion.md#mcp-guard-pipeline](references/bastion.md#mcp-guard-pipeline) |
 
-## Setup
+---
 
-See `README.md`. In short: `npm install`, set `PHAROS_PRIVATE_KEY` +
-`BASTION_POLICY_ADDRESS` + `BASTION_REGISTRY_ADDRESS` in `.env`, then `npm run mcp`.
+## Two interfaces
 
-Read-only tools work with no key.
+| Interface | When to use |
+|---|---|
+| **MCP** (`npm run mcp`) | Agent needs the full pipeline (simulate + risk + policy + decide) in one call. The `guard` tool is the primitive. |
+| **Cast** (`cast call` / `cast send`) | Granular on-chain reads/writes. Inspect one rule at a time, configure policy, or read the audit log directly. |
