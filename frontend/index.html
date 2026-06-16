@@ -96,15 +96,11 @@
     <a href="#" style="font-size:20px;font-weight:600;letter-spacing:-0.045em;color:#fff;text-decoration:none;flex-shrink:0;">Bastion</a>
     <div class="nav-center" style="display:flex;align-items:center;gap:34px;position:absolute;left:50%;transform:translateX(-50%);">
       <a class="nav-link" href="#decisions">Live Feed</a>
-      <a class="nav-link" href="#playground">Try Guardian</a>
+      <a class="nav-link" href="#playground">Try Bastion</a>
       <a class="nav-link" href="#trust">Security</a>
     </div>
     <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
-      <div style="display:flex;gap:2px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:2px;">
-        <button id="varA" class="var-btn active" onclick="setVariant('A')" style="padding:4px 11px;border-radius:5px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,0.52);font-size:11px;font-weight:600;">Protocol</button>
-        <button id="varB" class="var-btn"        onclick="setVariant('B')" style="padding:4px 11px;border-radius:5px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,0.52);font-size:11px;font-weight:600;">Sentinel</button>
-      </div>
-      <a href="#playground" class="cta-white" style="background:#fff;color:#000;padding:8px 22px;border-radius:8px;font-size:13.5px;font-weight:500;text-decoration:none;white-space:nowrap;">Try Guardian</a>
+      <a href="#playground" class="cta-white" style="background:#fff;color:#000;padding:8px 22px;border-radius:8px;font-size:13.5px;font-weight:500;text-decoration:none;white-space:nowrap;">Try Bastion</a>
     </div>
   </nav>
 
@@ -117,7 +113,7 @@
       </p>
       <div style="display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:fadeIn 700ms ease forwards;animation-delay:880ms;">
         <a href="#decisions" class="cta-white" style="background:#fff;color:#000;padding:11px 26px;border-radius:8px;font-weight:500;text-decoration:none;font-size:14px;display:inline-block;white-space:nowrap;">View Live Decisions</a>
-        <a href="#playground" class="cta-ghost" style="color:#fff;padding:11px 26px;border-radius:8px;font-weight:500;text-decoration:none;font-size:14px;display:inline-block;white-space:nowrap;">Try Guardian</a>
+        <a href="#playground" class="cta-ghost" style="color:#fff;padding:11px 26px;border-radius:8px;font-weight:500;text-decoration:none;font-size:14px;display:inline-block;white-space:nowrap;">Try Bastion</a>
       </div>
     </div>
     <div class="hero-tag" style="flex-shrink:0;align-self:flex-end;opacity:0;animation:fadeIn 700ms ease forwards;animation-delay:1050ms;">
@@ -230,20 +226,20 @@
         <!-- Left: description -->
         <div style="padding-top:4px;">
           <p style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Interactive</p>
-          <h2 style="font-size:clamp(22px,3vw,34px);font-weight:500;letter-spacing:-0.03em;line-height:1.22;margin-bottom:18px;color:#111318;">Try Guardian</h2>
-          <p style="font-size:14px;color:#626975;line-height:1.75;margin-bottom:36px;font-weight:400;">Evaluate any transaction against Bastion's policy engine. Results reflect live policies running on Pharos Atlantic Testnet.</p>
+          <h2 style="font-size:clamp(22px,3vw,34px);font-weight:500;letter-spacing:-0.03em;line-height:1.22;margin-bottom:18px;color:#111318;">Try Bastion</h2>
+          <p style="font-size:14px;color:#626975;line-height:1.75;margin-bottom:36px;font-weight:400;">Evaluate any transaction through the full Bastion pipeline — simulation, risk scoring, and on-chain policy check — against live contracts on Pharos Atlantic Testnet.</p>
           <div style="display:flex;flex-direction:column;gap:18px;">
             <div style="display:flex;align-items:flex-start;gap:16px;">
               <span style="font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#C4BDB4;padding-top:2px;flex-shrink:0;min-width:26px;">01</span>
-              <p style="font-size:13.5px;color:#626975;line-height:1.65;">Enter a wallet, contract, method and amount</p>
+              <p style="font-size:13.5px;color:#626975;line-height:1.65;">Enter the agent wallet, target contract, action and amount</p>
             </div>
             <div style="display:flex;align-items:flex-start;gap:16px;">
               <span style="font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#C4BDB4;padding-top:2px;flex-shrink:0;min-width:26px;">02</span>
-              <p style="font-size:13.5px;color:#626975;line-height:1.65;">The policy engine scores the transaction in real time</p>
+              <p style="font-size:13.5px;color:#626975;line-height:1.65;">Bastion simulates the call, scores risk factors, and checks the on-chain GuardianPolicy</p>
             </div>
             <div style="display:flex;align-items:flex-start;gap:16px;">
               <span style="font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#C4BDB4;padding-top:2px;flex-shrink:0;min-width:26px;">03</span>
-              <p style="font-size:13.5px;color:#626975;line-height:1.65;">The decision is returned with a full audit trail ready for GuardianRegistry</p>
+              <p style="font-size:13.5px;color:#626975;line-height:1.65;">An explainable ALLOW / WARN / DENY verdict is returned with full reasoning and a recommended fix</p>
             </div>
           </div>
         </div>
@@ -253,22 +249,30 @@
           <div style="padding:28px;">
             <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px;">
               <div>
-                <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Wallet Address</label>
-                <input id="p-wallet" class="input-field" placeholder="0x..." value="0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146">
+                <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Agent Wallet</label>
+                <input id="p-from" class="input-field" placeholder="0x..." value="0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146">
               </div>
               <div>
-                <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Contract Address</label>
-                <input id="p-contract" class="input-field" placeholder="0x..." value="0x6B175474E89094C44Da98b954EedeAC495271d0F">
+                <label id="p-to-label" style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Token Contract</label>
+                <input id="p-to" class="input-field" placeholder="0x..." value="0x7BBDa4409e300eaDB0A61F137498480c96173C9e">
               </div>
               <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
                 <div>
-                  <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Method</label>
-                  <input id="p-method" class="input-field" placeholder="transfer" value="approve">
+                  <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Action</label>
+                  <select id="p-action" class="input-field" onchange="onActionChange()" style="cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239BA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;">
+                    <option value="approve">ERC-20 Approve</option>
+                    <option value="transfer">ERC-20 Transfer</option>
+                    <option value="native">Native Transfer</option>
+                  </select>
                 </div>
                 <div>
-                  <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Amount</label>
-                  <input id="p-amount" class="input-field" placeholder="0" value="115792089237316195423570985008687907853">
+                  <label id="p-amount-label" style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Approval Amount (wei)</label>
+                  <input id="p-amount" class="input-field" placeholder="0" value="115792089237316195423570985008687907853269984665640564039457584007913129639935">
                 </div>
+              </div>
+              <div id="p-spender-row">
+                <label id="p-spender-label" style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Spender Address</label>
+                <input id="p-spender" class="input-field" placeholder="0x..." value="0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A">
               </div>
             </div>
             <button id="eval-btn" class="eval-btn" onclick="runEval()"
@@ -341,7 +345,7 @@
             <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#3D4755;margin-bottom:14px;">Product</div>
             <div style="display:flex;flex-direction:column;gap:9px;">
               <a class="footer-link" href="#decisions">Live Feed</a>
-              <a class="footer-link" href="#playground">Try Guardian</a>
+              <a class="footer-link" href="#playground">Try Bastion</a>
               <a class="footer-link" href="https://github.com/IamHarrie-Labs/pharos-bastion">GitHub</a>
               <a class="footer-link" href="#">MCP Skill</a>
             </div>
@@ -380,19 +384,14 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
 <script>
 // ── Config ──────────────────────────────────────────────────────────────────
+const API      = 'http://localhost:3457';
 const RPC      = 'https://atlantic.dplabs-internal.com';
 const REGISTRY = '0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A';
-const POLICY   = '0x7BBDa4409e300eaDB0A61F137498480c96173C9e';
 const EXPLORER = 'https://atlantic.pharosscan.xyz';
-const UNLIMITED = (BigInt(1) << BigInt(256)) - BigInt(1);
-const APPROVE_SEL = '0x095ea7b3';
 
 const REGISTRY_ABI = [
   'function getDecision(uint256 id) view returns (tuple(address account, address target, uint256 value, uint8 verdict, uint16 riskScore, bytes32 policyCode, bytes32 intentHash, uint256 timestamp))',
   'function totalDecisions() view returns (uint256)',
-];
-const POLICY_ABI = [
-  'function check(address account, address target, uint256 value, bytes4 selector, uint256 approvalAmount) view returns (bool allowed, string reason)',
 ];
 
 const VERDICT_NAMES = ['ALLOW', 'WARN', 'DENY'];
@@ -409,16 +408,15 @@ const REASON_MAP = {
 };
 
 // ── State ───────────────────────────────────────────────────────────────────
-let decisions = [];
-let nextId    = 100;
-let filter    = 'all';
+let decisions  = [];
+let nextId     = 0;
+let filter     = 'all';
 let evaluating = false;
 
-let provider, registry, policyCtx;
+let provider, registry;
 try {
-  provider  = new ethers.JsonRpcProvider(RPC);
-  registry  = new ethers.Contract(REGISTRY, REGISTRY_ABI, provider);
-  policyCtx = new ethers.Contract(POLICY,   POLICY_ABI,   provider);
+  provider = new ethers.JsonRpcProvider(RPC);
+  registry = new ethers.Contract(REGISTRY, REGISTRY_ABI, provider);
 } catch(e) { console.warn('ethers init:', e.message); }
 
 // ── Animated heading ──────────────────────────────────────────────────────
@@ -440,17 +438,12 @@ try {
   });
 })();
 
-// ── Variant switcher ──────────────────────────────────────────────────────
-function setVariant(v) {
-  document.body.classList.toggle('var-b', v === 'B');
-  document.getElementById('varA').classList.toggle('active', v === 'A');
-  document.getElementById('varB').classList.toggle('active', v === 'B');
-}
+
 
 // ── Decision rendering ────────────────────────────────────────────────────
-function vc(v)  { return v === 'ALLOW' ? 'var(--green)' : 'var(--red)'; }
-function vbg(v) { return v === 'ALLOW' ? 'var(--green-bg)' : 'var(--red-bg)'; }
-function vb(v)  { return v === 'ALLOW' ? 'var(--green-border)' : 'var(--red-border)'; }
+function vc(v)  { return v === 'ALLOW' ? 'var(--green)' : v === 'WARN' ? 'var(--amber)' : 'var(--red)'; }
+function vbg(v) { return v === 'ALLOW' ? 'var(--green-bg)' : v === 'WARN' ? 'rgba(245,158,11,0.1)' : 'var(--red-bg)'; }
+function vb(v)  { return v === 'ALLOW' ? 'var(--green-border)' : v === 'WARN' ? 'rgba(245,158,11,0.25)' : 'var(--red-border)'; }
 function rc(r)  { return r < 30 ? 'var(--green)' : r < 65 ? 'var(--amber)' : 'var(--red)'; }
 
 function rowHTML(d) {
@@ -536,28 +529,32 @@ function useMockData() {
   renderDecisions();
 }
 
-// ── Simulated live feed (new row every 8s) ────────────────────────────────
-const SIM_POOL = [
-  { verdict:'ALLOW', risk:() => Math.floor(Math.random()*16+2),  reason:'Safe ETH Transfer' },
-  { verdict:'ALLOW', risk:() => Math.floor(Math.random()*14+3),  reason:'Verified NFT Mint' },
-  { verdict:'ALLOW', risk:() => Math.floor(Math.random()*18+4),  reason:'Whitelisted Protocol Call' },
-  { verdict:'DENY',  risk:() => Math.floor(Math.random()*15+75), reason:'Suspicious Drain Attempt' },
-  { verdict:'DENY',  risk:() => Math.floor(Math.random()*12+78), reason:'Unauthorized Contract Call' },
-  { verdict:'DENY',  risk:() => Math.floor(Math.random()*16+72), reason:'Blacklisted Address Detected' },
-];
-
-function pushSim() {
-  const p = SIM_POOL[Math.floor(Math.random() * SIM_POOL.length)];
-  const h = () => Math.random().toString(16).slice(2, 8);
-  decisions = [{ id: nextId++, verdict: p.verdict, risk: p.risk(), reason: p.reason, ts: 'just now', tx: '0x'+h()+'...'+h().slice(0,4), explorerUrl: null }, ...decisions.slice(0, 7)];
-  renderDecisions();
-  const first = document.querySelector('#decision-tbody .decision-row');
-  if (first) { first.classList.add('new-row'); setTimeout(() => first.classList.remove('new-row'), 900); }
+// ── Playground ────────────────────────────────────────────────────────────
+function onActionChange() {
+  const action     = document.getElementById('p-action').value;
+  const spRow      = document.getElementById('p-spender-row');
+  const spLabel    = document.getElementById('p-spender-label');
+  const amtLabel   = document.getElementById('p-amount-label');
+  const toLabel    = document.getElementById('p-to-label');
+  if (action === 'native') {
+    spRow.style.display    = 'none';
+    amtLabel.textContent   = 'Value (wei)';
+    toLabel.textContent    = 'Recipient';
+  } else if (action === 'approve') {
+    spRow.style.display    = 'block';
+    spLabel.textContent    = 'Spender Address';
+    amtLabel.textContent   = 'Approval Amount (wei)';
+    toLabel.textContent    = 'Token Contract';
+  } else {
+    spRow.style.display    = 'block';
+    spLabel.textContent    = 'Recipient Address';
+    amtLabel.textContent   = 'Transfer Amount (wei)';
+    toLabel.textContent    = 'Token Contract';
+  }
 }
 
-// ── Playground ────────────────────────────────────────────────────────────
-const STAGE_LABELS = ['Parsing transaction calldata...','Consulting policy registry...','Running risk scoring engine...','Generating on chain proof...'];
-const STAGE_DESCS  = ['Transaction calldata parsed','Policy registry loaded','Risk score computed','On chain proof generated'];
+const STAGE_LABELS = ['Parsing transaction calldata...','Consulting policy registry...','Running risk scoring engine...','Generating verdict...'];
+const STAGE_DESCS  = ['Transaction calldata decoded','On-chain policy loaded','Risk score computed','Verdict generated'];
 
 function checkSVG() {
   return `<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
@@ -577,6 +574,80 @@ function showStage(n) {
   }
 }
 
+function showApiError(el, msg) {
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="display:flex;align-items:flex-start;gap:12px;">
+      <div style="width:36px;height:36px;border-radius:9px;background:var(--red-bg);border:1px solid var(--red-border);display:flex;align-items:center;justify-content:center;color:var(--red);flex-shrink:0;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </div>
+      <div>
+        <div style="font-size:14px;font-weight:600;color:var(--red);margin-bottom:5px;">API Unavailable</div>
+        <div style="font-size:12.5px;color:#626975;line-height:1.65;">${msg}</div>
+        <div style="margin-top:10px;padding:7px 12px;background:#F5F3EF;border-radius:7px;font-size:11.5px;font-family:'JetBrains Mono';color:#626975;">npm run api</div>
+      </div>
+    </div>`;
+}
+
+function showResult(el, d) {
+  const verdict    = d.decision ?? 'DENY';
+  const risk       = d.riskScore ?? 0;
+  const confidence = Math.round((d.confidence ?? 0.95) * 100);
+  const isAllow    = verdict === 'ALLOW';
+  const isWarn     = verdict === 'WARN';
+  const col = isAllow ? 'var(--green)' : isWarn ? 'var(--amber)' : 'var(--red)';
+  const bg  = isAllow ? 'var(--green-bg)' : isWarn ? 'rgba(245,158,11,0.1)' : 'var(--red-bg)';
+  const bdr = isAllow ? 'var(--green-border)' : isWarn ? 'rgba(245,158,11,0.25)' : 'var(--red-border)';
+  const iconPath = isAllow
+    ? '<path d="M20 6L9 17l-5-5"/>'
+    : isWarn
+    ? '<path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'
+    : '<path d="M18 6L6 18M6 6l12 12"/>';
+
+  const simSummary = d.simulation?.decoded?.summary ?? '';
+  const fix        = d.recommended_fix ?? '';
+  const intentShort = d.intentHash ? d.intentHash.slice(0,10)+'...'+d.intentHash.slice(-6) : '';
+
+  const factorsHTML = (d.factors ?? []).length
+    ? `<div style="padding:10px 13px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:9px;">
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:8px;font-weight:600;">Risk Factors</div>
+        ${(d.factors).map(f => `
+          <div style="display:flex;align-items:flex-start;gap:8px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04);">
+            <span style="flex-shrink:0;font-size:10px;font-family:'JetBrains Mono';background:rgba(239,68,68,0.08);color:var(--red);padding:2px 7px;border-radius:4px;border:1px solid rgba(239,68,68,0.15);margin-top:1px;">${f.code}</span>
+            <span style="font-size:12px;color:#626975;line-height:1.5;">${f.detail}</span>
+          </div>`).join('')}
+      </div>` : '';
+
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+      <div style="width:40px;height:40px;border-radius:11px;background:${bg};border:1px solid ${bdr};display:flex;align-items:center;justify-content:center;color:${col};flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:600;color:${col};letter-spacing:-0.02em;">${verdict}</div>
+        <div style="font-size:11.5px;color:#9BA3AF;font-family:'JetBrains Mono';margin-top:2px;">Risk ${risk}/100 &middot; Confidence ${confidence}%</div>
+      </div>
+    </div>
+    ${simSummary ? `<div style="padding:10px 13px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:9px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:4px;font-weight:600;">What this transaction does</div>
+      <div style="font-size:12px;color:#626975;font-family:'JetBrains Mono';line-height:1.6;word-break:break-all;">${simSummary}</div>
+    </div>` : ''}
+    <div style="padding:10px 13px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:9px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:4px;font-weight:600;">Deciding Rule</div>
+      <div style="font-size:13.5px;font-weight:500;color:${col};">${d.reason ?? ''}</div>
+    </div>
+    ${factorsHTML}
+    ${fix ? `<div style="padding:10px 13px;background:var(--accent-dim);border:1px solid var(--accent-glow);border-radius:8px;margin-bottom:9px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--accent);margin-bottom:4px;font-weight:600;">Recommended Fix</div>
+      <div style="font-size:12.5px;color:#626975;line-height:1.65;">${fix}</div>
+    </div>` : ''}
+    ${intentShort ? `<div style="display:flex;align-items:center;justify-content:space-between;padding-top:9px;border-top:1px solid rgba(0,0,0,0.05);">
+      <span style="font-size:11px;color:#9BA3AF;">Intent hash</span>
+      <span style="font-size:11px;font-family:'JetBrains Mono';color:#626975;">${intentShort}</span>
+    </div>` : ''}`;
+}
+
 async function runEval() {
   if (evaluating) return;
   evaluating = true;
@@ -590,110 +661,51 @@ async function runEval() {
   stages.style.display = 'block';
   result.style.display = 'none';
 
-  const wallet   = document.getElementById('p-wallet').value.trim();
-  const contract = document.getElementById('p-contract').value.trim();
-  const method   = document.getElementById('p-method').value.trim();
-  const amtStr   = document.getElementById('p-amount').value.trim() || '0';
+  const from    = document.getElementById('p-from').value.trim();
+  const to      = document.getElementById('p-to').value.trim();
+  const action  = document.getElementById('p-action').value;
+  const amount  = document.getElementById('p-amount').value.trim() || '0';
+  const spender = document.getElementById('p-spender')?.value.trim() || '';
 
-  // Animate through 4 stages
+  let data = '0x', value = '0';
+  try {
+    if (action === 'approve' && spender) {
+      const iface = new ethers.Interface(['function approve(address,uint256)']);
+      data = iface.encodeFunctionData('approve', [spender, BigInt(amount)]);
+    } else if (action === 'transfer' && spender) {
+      const iface = new ethers.Interface(['function transfer(address,uint256)']);
+      data = iface.encodeFunctionData('transfer', [spender, BigInt(amount)]);
+    } else if (action === 'native') {
+      value = amount;
+    }
+  } catch(e) { console.warn('calldata encode:', e.message); }
+
   for (let i = 0; i < 4; i++) {
-    await new Promise(r => setTimeout(r, i === 0 ? 400 : 480));
+    await new Promise(r => setTimeout(r, i === 0 ? 350 : 440));
     showStage(i);
   }
-  await new Promise(r => setTimeout(r, 400));
+  await new Promise(r => setTimeout(r, 300));
 
-  let verdict, risk, confidence, policy, reason;
-
+  let apiResult;
   try {
-    const isApprove = /approve|setApprovalForAll/i.test(method);
-    const selector  = isApprove ? APPROVE_SEL : '0x00000000';
-    let   approvalAmt = '0';
-    let   isUnlimited = false;
-
-    if (isApprove) {
-      try {
-        const bigAmt = BigInt(amtStr);
-        isUnlimited  = bigAmt === UNLIMITED;
-        approvalAmt  = bigAmt.toString();
-      } catch { isUnlimited = true; approvalAmt = UNLIMITED.toString(); }
-    }
-
-    // Try real on-chain policy check
-    let policyAllowed = null, policyReason = 'NO_POLICY';
-    if (policyCtx && ethers.isAddress(wallet) && ethers.isAddress(contract)) {
-      try {
-        [policyAllowed, policyReason] = await policyCtx.check(wallet, contract, '0', selector, approvalAmt);
-      } catch { /* fall through */ }
-    }
-
-    // Client-side risk scoring
-    const highRisk = isApprove && isUnlimited;
-
-    if (highRisk) {
-      risk = 85; confidence = 97; verdict = 'DENY';
-      policy = 'Unlimited Token Approval Detected';
-      reason = 'This transaction grants max uint256 approval to an unverified contract. This pattern is consistent with phishing attacks that drain wallet balances. Policy P-002 prohibits unlimited ERC-20 approvals to non-whitelisted addresses.';
-    } else if (policyAllowed === false && policyReason !== 'OK') {
-      risk = 45; confidence = 99; verdict = 'DENY';
-      policy = REASON_MAP[policyReason] ?? policyReason;
-      reason = `Blocked by on-chain policy: ${policyReason}. The GuardianPolicy contract rejected this transaction before it could reach the blockchain.`;
-    } else {
-      risk = Math.floor(Math.random() * 12 + 3); confidence = 99; verdict = 'ALLOW';
-      policy = 'Standard Transfer, No Violations';
-      reason = `Transaction evaluated against active policies. No violations detected. Risk score ${risk}/100 is within the safe threshold of 30. This decision would be permanently recorded on GuardianRegistry.`;
-    }
-  } catch(e) {
-    // Pure client-side fallback
-    const risky = /approve|drain|setApprovalForAll|permit/i.test(method);
-    if (risky) {
-      verdict='DENY'; risk=85; confidence=97;
-      policy='Unlimited Token Approval Detected';
-      reason='This transaction grants max uint256 approval to an unverified contract. Policy P-002 prohibits unlimited ERC-20 approvals to non-whitelisted contracts.';
-    } else {
-      verdict='ALLOW'; risk=8; confidence=99;
-      policy='Standard Transfer, No Violations';
-      reason='Transaction evaluated against active policies. No violations detected. Risk score 8/100 is within the safe threshold. Decision would be written to GuardianRegistry.';
-    }
+    const resp = await fetch(API + '/guard', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ from, to, value, data }),
+    });
+    apiResult = await resp.json();
+  } catch {
+    showApiError(result, 'Bastion API is not running. Start it in a separate terminal, then try again.');
+    evaluating = false; btn.disabled = false; btn.innerHTML = 'Evaluate Transaction';
+    return;
   }
 
-  const isAllow  = verdict === 'ALLOW';
-  const col      = isAllow ? 'var(--green)' : 'var(--red)';
-  const bg       = isAllow ? 'var(--green-bg)' : 'var(--red-bg)';
-  const bdr      = isAllow ? 'var(--green-border)' : 'var(--red-border)';
-  const iconPath = isAllow
-    ? '<path d="M20 6L9 17l-5-5"/>'
-    : '<path d="M18 6L6 18M6 6l12 12"/>';
-
-  result.style.display = 'block';
-  result.innerHTML = `
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
-      <div style="width:40px;height:40px;border-radius:11px;background:${bg};border:1px solid ${bdr};display:flex;align-items:center;justify-content:center;color:${col};flex-shrink:0;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>
-      </div>
-      <div>
-        <div style="font-size:18px;font-weight:600;color:${col};letter-spacing:-0.02em;">${verdict}</div>
-        <div style="font-size:11.5px;color:#9BA3AF;font-family:'JetBrains Mono';margin-top:2px;">Risk ${risk}/100 &middot; Confidence ${confidence}%</div>
-      </div>
-    </div>
-    <div style="padding:11px 14px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:9px;">
-      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:4px;font-weight:600;">Policy Triggered</div>
-      <div style="font-size:13.5px;font-weight:500;color:${col};">${policy}</div>
-    </div>
-    <div style="padding:11px 14px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:14px;">
-      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:5px;font-weight:600;">Analysis</div>
-      <div style="font-size:13px;color:#626975;line-height:1.68;">${reason}</div>
-    </div>
-    <p style="font-size:11.5px;color:#9BA3AF;">This decision would be permanently written to <span style="font-family:'JetBrains Mono';color:#626975;">GuardianRegistry</span> on Pharos.</p>
-  `;
-
-  evaluating   = false;
-  btn.disabled = false;
-  btn.innerHTML = 'Evaluate Transaction';
+  showResult(result, apiResult);
+  evaluating = false; btn.disabled = false; btn.innerHTML = 'Evaluate Transaction';
 }
 
 // ── Boot ──────────────────────────────────────────────────────────────────
 loadChain();
-setInterval(pushSim, 8000);
 </script>
 </body>
 </html>

@@ -10,17 +10,22 @@
     "test": "hardhat test",
     "deploy": "hardhat run scripts/deploy.ts --network pharos",
     "demo": "tsx scripts/demo.ts",
-    "mcp": "tsx src/index.ts"
+    "mcp": "tsx src/index.ts",
+    "api": "tsx src/api.ts"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.0.4",
+    "cors": "^2.8.6",
     "dotenv": "^16.4.7",
     "ethers": "^6.13.4",
+    "express": "^5.2.1",
     "zod": "^3.23.8"
   },
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "@openzeppelin/contracts": "^5.1.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
     "@types/node": "^22.10.2",
     "hardhat": "^2.22.17",
     "tsx": "^4.19.2",
