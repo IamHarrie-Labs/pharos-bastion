@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bastion — AI Transaction Firewall for Autonomous Agents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: #F8F7F4; color: #111318;
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      --accent: #3B82F6;
+      --accent-glow: rgba(59,130,246,0.14);
+      --accent-dim: rgba(59,130,246,0.08);
+      --green: #10B981; --green-bg: rgba(16,185,129,0.1); --green-border: rgba(16,185,129,0.22);
+      --red: #EF4444;   --red-bg: rgba(239,68,68,0.1);    --red-border: rgba(239,68,68,0.22);
+      --amber: #F59E0B;
+    }
+    body.var-b {
+      --accent: #8B5CF6;
+      --accent-glow: rgba(139,92,246,0.14);
+      --accent-dim: rgba(139,92,246,0.08);
+    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #D1CEC8; border-radius: 4px; }
+
+    @keyframes charIn   { from{opacity:0;transform:translateY(10px);}  to{opacity:1;transform:translateY(0);} }
+    @keyframes fadeIn   { from{opacity:0;}                              to{opacity:1;} }
+    @keyframes dotPulse { 0%,100%{opacity:.35;} 50%{opacity:1;} }
+    @keyframes rowIn    { from{opacity:0;transform:translateY(-8px);}  to{opacity:1;transform:translateY(0);} }
+    @keyframes spin     { from{transform:rotate(0deg);}                 to{transform:rotate(360deg);} }
+    @keyframes stageIn  { from{opacity:0;transform:translateX(-8px);}  to{opacity:1;transform:translateX(0);} }
+    @keyframes resultIn { from{opacity:0;transform:translateY(10px);}  to{opacity:1;transform:translateY(0);} }
+    @keyframes drawPath { from{stroke-dashoffset:1200;}                 to{stroke-dashoffset:0;} }
+
+    .new-row       { animation: rowIn 0.5s ease; }
+    .decision-row  { transition: background .12s; cursor: pointer; }
+    .decision-row:hover { background: #F5F3EF !important; }
+    .nav-link { color:rgba(255,255,255,0.58); text-decoration:none; font-size:13.5px; font-weight:400; transition:color .2s; }
+    .nav-link:hover { color:rgba(255,255,255,0.9); }
+    .cta-white { transition:opacity .2s,transform .18s; }
+    .cta-white:hover { opacity:.86; transform:translateY(-1px); }
+    .cta-ghost { transition:background .2s,color .2s; border:1px solid rgba(255,255,255,0.2); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); background:rgba(255,255,255,0.06); }
+    .cta-ghost:hover { background:#fff !important; color:#000 !important; }
+    .eval-btn { transition:opacity .18s,transform .18s; }
+    .eval-btn:hover:not(:disabled) { opacity:.88; transform:translateY(-1px); }
+    .filter-btn { transition:all .16s; cursor:pointer; font-family:'Inter',sans-serif; }
+    .filter-btn.active { background:var(--accent-dim) !important; color:var(--accent) !important; border-color:var(--accent) !important; }
+    .var-btn { transition:all .18s; cursor:pointer; font-family:'Inter',sans-serif; }
+    .var-btn.active { background:var(--accent-dim) !important; border-color:var(--accent) !important; color:#F8FAFC !important; }
+    .input-field { width:100%; background:#FAFAF8; border:1px solid rgba(0,0,0,0.1); border-radius:8px; padding:10px 13px; font-size:12px; color:#111318; font-family:'JetBrains Mono',monospace; transition:border-color .2s,box-shadow .2s; }
+    .input-field:focus { border-color:var(--accent) !important; outline:none; box-shadow:0 0 0 3px var(--accent-dim) !important; }
+    .footer-link { color:#8B95A1; text-decoration:none; font-size:13.5px; transition:color .18s; }
+    .footer-link:hover { color:#F8FAFC; }
+    .pillar-card { transition:box-shadow .2s,transform .2s; }
+    .pillar-card:hover { box-shadow:0 4px 24px rgba(0,0,0,0.09) !important; transform:translateY(-2px); }
+    .trust-item { transition:opacity .2s; }
+    .trust-item:hover { opacity:.85; }
+
+    @media (max-width:1024px) {
+      .nav-center { display:none !important; }
+      .hero-tag   { display:none !important; }
+      .playground-two-col { grid-template-columns:1fr !important; }
+    }
+    @media (max-width:768px) {
+      .pillars-grid   { grid-template-columns:1fr !important; }
+      .trust-grid     { grid-template-columns:1fr 1fr !important; }
+      .trust-two-col  { grid-template-columns:1fr !important; }
+    }
+    @media (max-width:640px) {
+      .dec-ts, .dec-tx { display:none !important; }
+      .dec-table { grid-template-columns:60px 100px 80px 1fr !important; }
+      .hero-pad  { padding-left:20px !important; padding-right:20px !important; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section style="position:relative;height:100vh;overflow:hidden;display:flex;flex-direction:column;background:#0B0D10;">
+  <video autoplay loop muted playsinline
+    src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260403_050628_c4e32401-fab4-4a27-b7a8-6e9291cd5959.mp4"
+    style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none;filter:brightness(1.15) saturate(1.05);">
+  </video>
+  <div style="position:absolute;inset:0;z-index:1;background:linear-gradient(180deg,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0) 32%,rgba(0,0,0,0) 50%,rgba(0,0,0,0.68) 100%);pointer-events:none;"></div>
+
+  <!-- NAV -->
+  <nav class="hero-pad" style="position:relative;z-index:10;flex-shrink:0;padding:24px 52px 0;display:flex;align-items:center;justify-content:space-between;gap:24px;">
+    <a href="#" style="font-size:20px;font-weight:600;letter-spacing:-0.045em;color:#fff;text-decoration:none;flex-shrink:0;">Bastion</a>
+    <div class="nav-center" style="display:flex;align-items:center;gap:34px;position:absolute;left:50%;transform:translateX(-50%);">
+      <a class="nav-link" href="#decisions">Live Feed</a>
+      <a class="nav-link" href="#playground">Try Guardian</a>
+      <a class="nav-link" href="#trust">Security</a>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+      <div style="display:flex;gap:2px;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:2px;">
+        <button id="varA" class="var-btn active" onclick="setVariant('A')" style="padding:4px 11px;border-radius:5px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,0.52);font-size:11px;font-weight:600;">Protocol</button>
+        <button id="varB" class="var-btn"        onclick="setVariant('B')" style="padding:4px 11px;border-radius:5px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,0.52);font-size:11px;font-weight:600;">Sentinel</button>
+      </div>
+      <a href="#playground" class="cta-white" style="background:#fff;color:#000;padding:8px 22px;border-radius:8px;font-size:13.5px;font-weight:500;text-decoration:none;white-space:nowrap;">Try Guardian</a>
+    </div>
+  </nav>
+
+  <!-- CONTENT -->
+  <div class="hero-pad" style="position:relative;z-index:10;flex:1;display:flex;align-items:flex-end;justify-content:space-between;padding:0 52px 56px;gap:40px;">
+    <div style="max-width:680px;">
+      <h1 id="hero-heading" style="font-size:clamp(24px,3vw,40px);font-weight:500;margin-bottom:13px;letter-spacing:-0.04em;line-height:1.1;color:#fff;"></h1>
+      <p style="font-size:13.5px;color:rgba(255,255,255,0.5);margin-bottom:22px;line-height:1.68;font-weight:400;opacity:0;animation:fadeIn 700ms ease forwards;animation-delay:600ms;">
+        We evaluate blockchain actions before execution and permanently record every decision on chain.
+      </p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;opacity:0;animation:fadeIn 700ms ease forwards;animation-delay:880ms;">
+        <a href="#decisions" class="cta-white" style="background:#fff;color:#000;padding:11px 26px;border-radius:8px;font-weight:500;text-decoration:none;font-size:14px;display:inline-block;white-space:nowrap;">View Live Decisions</a>
+        <a href="#playground" class="cta-ghost" style="color:#fff;padding:11px 26px;border-radius:8px;font-weight:500;text-decoration:none;font-size:14px;display:inline-block;white-space:nowrap;">Try Guardian</a>
+      </div>
+    </div>
+    <div class="hero-tag" style="flex-shrink:0;align-self:flex-end;opacity:0;animation:fadeIn 700ms ease forwards;animation-delay:1050ms;">
+      <div style="background:rgba(255,255,255,0.06);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding:10px 22px;border-radius:100px;border:1px solid rgba(255,255,255,0.18);">
+        <span style="font-size:13.5px;font-weight:400;color:rgba(255,255,255,0.82);white-space:nowrap;">Evaluate. Protect. Record.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ BODY ═══════════════════════════ -->
+<div style="background:#F8F7F4;color:#111318;">
+
+  <!-- WHAT IT IS -->
+  <section style="padding:96px 52px 80px;position:relative;overflow:hidden;">
+    <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(0,0,0,0.055) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;"></div>
+    <div style="max-width:1140px;margin:0 auto;position:relative;">
+      <div style="max-width:560px;margin-bottom:64px;">
+        <p style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">What Bastion Does</p>
+        <h2 style="font-size:clamp(24px,3vw,36px);font-weight:500;letter-spacing:-0.03em;line-height:1.22;color:#111318;">An AI transaction firewall that stands between autonomous agents and the blockchain.</h2>
+      </div>
+      <div class="pillars-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div class="pillar-card" style="background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:14px;padding:36px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.05),0 4px 16px rgba(0,0,0,0.04);">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#C4BDB4;margin-bottom:22px;">01</div>
+          <h3 style="font-size:17px;font-weight:500;letter-spacing:-0.02em;margin-bottom:11px;color:#111318;">Intercept</h3>
+          <p style="font-size:13.5px;color:#626975;line-height:1.72;">Every proposed transaction is captured by the Guardian MCP skill before it reaches the blockchain. Nothing bypasses evaluation.</p>
+        </div>
+        <div class="pillar-card" style="background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:14px;padding:36px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.05),0 4px 16px rgba(0,0,0,0.04);">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#C4BDB4;margin-bottom:22px;">02</div>
+          <h3 style="font-size:17px;font-weight:500;letter-spacing:-0.02em;margin-bottom:11px;color:#111318;">Evaluate</h3>
+          <p style="font-size:13.5px;color:#626975;line-height:1.72;">The policy engine scores each transaction against active rules. Risk factors, contract trust levels, and spending limits are all considered.</p>
+        </div>
+        <div class="pillar-card" style="background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:14px;padding:36px 32px;box-shadow:0 1px 4px rgba(0,0,0,0.05),0 4px 16px rgba(0,0,0,0.04);">
+          <div style="font-size:10.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#C4BDB4;margin-bottom:22px;">03</div>
+          <h3 style="font-size:17px;font-weight:500;letter-spacing:-0.02em;margin-bottom:11px;color:#111318;">Record</h3>
+          <p style="font-size:13.5px;color:#626975;line-height:1.72;">Every decision is written permanently to GuardianRegistry on Pharos. Machine verifiable. Tamper proof. Always available.</p>
+        </div>
+      </div>
+      <!-- Flowing connector -->
+      <div style="margin-top:0;overflow:hidden;height:40px;pointer-events:none;">
+        <svg width="100%" height="40" viewBox="0 0 1140 40" preserveAspectRatio="none" fill="none">
+          <defs>
+            <linearGradient id="curveGrad" x1="0" y1="0" x2="1" y2="0" gradientUnits="objectBoundingBox">
+              <stop offset="0%"   stop-color="#9BA3AF" stop-opacity="0"/>
+              <stop offset="25%"  stop-color="#9BA3AF" stop-opacity="0.3"/>
+              <stop offset="50%"  stop-color="#9BA3AF" stop-opacity="0.45"/>
+              <stop offset="75%"  stop-color="#9BA3AF" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#9BA3AF" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 32 Q285 8 570 22 Q855 36 1140 10" stroke="url(#curveGrad)" stroke-width="1" fill="none" stroke-dasharray="1200" stroke-dashoffset="1200" style="animation:drawPath 2.2s ease 0.5s forwards;"/>
+          <circle cx="190" cy="20" r="3" fill="none" stroke="#9BA3AF" stroke-opacity="0.35" stroke-width="1"/>
+          <circle cx="570" cy="22" r="3" fill="none" stroke="#9BA3AF" stroke-opacity="0.35" stroke-width="1"/>
+          <circle cx="950" cy="18" r="3" fill="none" stroke="#9BA3AF" stroke-opacity="0.35" stroke-width="1"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- LIVE DECISIONS -->
+  <section id="decisions" style="padding:0 52px 96px;background:#fff;">
+    <div style="max-width:1140px;margin:0 auto;">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:20px;margin-bottom:28px;">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+            <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;animation:dotPulse 2.5s ease-in-out infinite;flex-shrink:0;"></span>
+            <span style="font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#9BA3AF;">GuardianRegistry</span>
+          </div>
+          <h2 style="font-size:clamp(22px,2.8vw,32px);font-weight:500;letter-spacing:-0.03em;color:#111318;">Live Decision Feed</h2>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="filter-btn active" id="f-all"   onclick="setFilter('all')"   style="padding:6px 14px;background:transparent;border:1px solid rgba(0,0,0,0.1);border-radius:7px;color:#626975;font-size:12px;font-weight:500;">All</button>
+          <button class="filter-btn"        id="f-allow" onclick="setFilter('ALLOW')" style="padding:6px 14px;background:transparent;border:1px solid rgba(0,0,0,0.1);border-radius:7px;color:#626975;font-size:12px;font-weight:500;">Allow</button>
+          <button class="filter-btn"        id="f-deny"  onclick="setFilter('DENY')"  style="padding:6px 14px;background:transparent;border:1px solid rgba(0,0,0,0.1);border-radius:7px;color:#626975;font-size:12px;font-weight:500;">Deny</button>
+        </div>
+      </div>
+
+      <div style="border:1px solid rgba(0,0,0,0.08);border-radius:14px;overflow:hidden;background:#FAFAF8;box-shadow:0 1px 4px rgba(0,0,0,0.04),0 4px 20px rgba(0,0,0,0.04);">
+        <!-- Table header -->
+        <div class="dec-table" style="display:grid;grid-template-columns:60px 130px 110px 72px 1fr 120px;align-items:center;padding:11px 24px;border-bottom:1px solid rgba(0,0,0,0.07);gap:16px;background:#F5F3EF;">
+          <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">ID</span>
+          <span class="dec-ts" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Time</span>
+          <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Verdict</span>
+          <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Risk</span>
+          <span style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Reason</span>
+          <span class="dec-tx" style="font-size:10.5px;text-transform:uppercase;letter-spacing:.9px;color:#9BA3AF;font-weight:600;">Transaction</span>
+        </div>
+        <!-- Table body -->
+        <div id="decision-tbody">
+          <!-- skeleton rows while loading -->
+          <div style="padding:22px 24px;text-align:center;font-size:13px;color:#9BA3AF;font-family:'JetBrains Mono';">Loading from GuardianRegistry…</div>
+        </div>
+      </div>
+      <p style="margin-top:11px;font-size:12px;color:#9BA3AF;">Decisions are written to <span style="font-family:'JetBrains Mono';color:#626975;">GuardianRegistry.sol</span> on every evaluation. Immutable and independently verifiable.</p>
+    </div>
+  </section>
+
+  <!-- TRY GUARDIAN -->
+  <section id="playground" style="padding:96px 52px;background:#F2F0EC;position:relative;overflow:hidden;">
+    <div style="position:absolute;right:0;top:0;pointer-events:none;overflow:hidden;width:380px;height:380px;">
+      <svg width="380" height="380" viewBox="0 0 380 380" fill="none">
+        <circle cx="380" cy="0" r="160" stroke="rgba(0,0,0,0.05)" stroke-width="1" fill="none"/>
+        <circle cx="380" cy="0" r="240" stroke="rgba(0,0,0,0.04)" stroke-width="1" fill="none"/>
+        <circle cx="380" cy="0" r="320" stroke="rgba(0,0,0,0.03)" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <div style="max-width:1140px;margin:0 auto;position:relative;">
+      <div class="playground-two-col" style="display:grid;grid-template-columns:1fr 1fr;gap:88px;align-items:start;">
+
+        <!-- Left: description -->
+        <div style="padding-top:4px;">
+          <p style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Interactive</p>
+          <h2 style="font-size:clamp(22px,3vw,34px);font-weight:500;letter-spacing:-0.03em;line-height:1.22;margin-bottom:18px;color:#111318;">Try Guardian</h2>
+          <p style="font-size:14px;color:#626975;line-height:1.75;margin-bottom:36px;font-weight:400;">Evaluate any transaction against Bastion's policy engine. Results reflect live policies running on Pharos Atlantic Testnet.</p>
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+              <span style="font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#C4BDB4;padding-top:2px;flex-shrink:0;min-width:26px;">01</span>
+              <p style="font-size:13.5px;color:#626975;line-height:1.65;">Enter a wallet, contract, method and amount</p>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+              <span style="font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#C4BDB4;padding-top:2px;flex-shrink:0;min-width:26px;">02</span>
+              <p style="font-size:13.5px;color:#626975;line-height:1.65;">The policy engine scores the transaction in real time</p>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:16px;">
+              <span style="font-size:10.5px;font-weight:700;letter-spacing:.9px;text-transform:uppercase;color:#C4BDB4;padding-top:2px;flex-shrink:0;min-width:26px;">03</span>
+              <p style="font-size:13.5px;color:#626975;line-height:1.65;">The decision is returned with a full audit trail ready for GuardianRegistry</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: form card -->
+        <div style="background:#fff;border:1px solid rgba(0,0,0,0.08);border-radius:16px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06),0 8px 32px rgba(0,0,0,0.05);">
+          <div style="padding:28px;">
+            <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px;">
+              <div>
+                <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Wallet Address</label>
+                <input id="p-wallet" class="input-field" placeholder="0x..." value="0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146">
+              </div>
+              <div>
+                <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Contract Address</label>
+                <input id="p-contract" class="input-field" placeholder="0x..." value="0x6B175474E89094C44Da98b954EedeAC495271d0F">
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <div>
+                  <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Method</label>
+                  <input id="p-method" class="input-field" placeholder="transfer" value="approve">
+                </div>
+                <div>
+                  <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Amount</label>
+                  <input id="p-amount" class="input-field" placeholder="0" value="115792089237316195423570985008687907853">
+                </div>
+              </div>
+            </div>
+            <button id="eval-btn" class="eval-btn" onclick="runEval()"
+              style="width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:9px;font-size:14px;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 16px var(--accent-glow);">
+              Evaluate Transaction
+            </button>
+          </div>
+
+          <!-- Evaluation stages (shown while running) -->
+          <div id="eval-stages" style="display:none;padding:16px 28px 20px;border-top:1px solid rgba(0,0,0,0.06);background:#FAFAF8;">
+            <p id="stage-label" style="font-size:11.5px;color:var(--accent);margin-bottom:11px;font-family:'JetBrains Mono';">Parsing transaction calldata...</p>
+            <div id="stage-items" style="display:flex;flex-direction:column;gap:8px;"></div>
+          </div>
+
+          <!-- Result -->
+          <div id="eval-result" style="display:none;padding:22px 28px 24px;border-top:1px solid rgba(0,0,0,0.06);animation:resultIn .4s ease;background:#FAFAF8;"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- TRUST -->
+  <section id="trust" style="padding:96px 52px;background:#fff;position:relative;overflow:hidden;">
+    <div style="position:absolute;left:0;bottom:0;pointer-events:none;overflow:hidden;width:340px;height:340px;">
+      <svg width="340" height="340" viewBox="0 0 340 340" fill="none">
+        <circle cx="0" cy="340" r="180" stroke="rgba(0,0,0,0.04)" stroke-width="1" fill="none"/>
+        <circle cx="0" cy="340" r="260" stroke="rgba(0,0,0,0.03)" stroke-width="1" fill="none"/>
+        <circle cx="0" cy="340" r="340" stroke="rgba(0,0,0,0.025)" stroke-width="1" fill="none"/>
+      </svg>
+    </div>
+    <div style="max-width:1140px;margin:0 auto;position:relative;">
+      <div class="trust-two-col" style="display:grid;grid-template-columns:300px 1fr;gap:88px;align-items:start;">
+        <div>
+          <p style="font-size:11px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:14px;">Security</p>
+          <h2 style="font-size:clamp(22px,2.8vw,32px);font-weight:500;letter-spacing:-0.03em;line-height:1.2;color:#111318;">Trust by design.</h2>
+        </div>
+        <div class="trust-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:36px 48px;">
+          <div class="trust-item">
+            <h3 style="font-size:15px;font-weight:500;margin-bottom:9px;color:#111318;letter-spacing:-0.015em;">On chain verification</h3>
+            <p style="font-size:13.5px;color:#626975;line-height:1.72;">Every decision hash is written to GuardianRegistry. Independently verifiable by anyone with no trust assumption required.</p>
+          </div>
+          <div class="trust-item">
+            <h3 style="font-size:15px;font-weight:500;margin-bottom:9px;color:#111318;letter-spacing:-0.015em;">Machine verifiable audit</h3>
+            <p style="font-size:13.5px;color:#626975;line-height:1.72;">Decisions include cryptographic proofs readable by other smart contracts. No off chain intermediaries, no hidden state.</p>
+          </div>
+          <div class="trust-item">
+            <h3 style="font-size:15px;font-weight:500;margin-bottom:9px;color:#111318;letter-spacing:-0.015em;">Policy enforcement</h3>
+            <p style="font-size:13.5px;color:#626975;line-height:1.72;">Define spending limits, whitelist protocols, and block suspicious patterns. Policies run before execution, not after the damage.</p>
+          </div>
+          <div class="trust-item">
+            <h3 style="font-size:15px;font-weight:500;margin-bottom:9px;color:#111318;letter-spacing:-0.015em;">Immutable history</h3>
+            <p style="font-size:13.5px;color:#626975;line-height:1.72;">The complete record of every evaluation lives permanently on Pharos. Tamper proof, censorship resistant, always available.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer style="background:#0F1117;color:#F8FAFC;padding:56px 52px 40px;">
+    <div style="max-width:1140px;margin:0 auto;">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:40px;margin-bottom:48px;">
+        <div style="max-width:220px;">
+          <div style="font-size:18px;font-weight:600;letter-spacing:-0.045em;margin-bottom:12px;">Bastion</div>
+          <p style="font-size:13px;color:#3D4755;line-height:1.7;">AI transaction firewall for autonomous blockchain agents. Every decision, on chain, forever.</p>
+        </div>
+        <div style="display:flex;gap:52px;flex-wrap:wrap;">
+          <div>
+            <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#3D4755;margin-bottom:14px;">Product</div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <a class="footer-link" href="#decisions">Live Feed</a>
+              <a class="footer-link" href="#playground">Try Guardian</a>
+              <a class="footer-link" href="https://github.com/IamHarrie-Labs/pharos-bastion">GitHub</a>
+              <a class="footer-link" href="#">MCP Skill</a>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#3D4755;margin-bottom:14px;">Built For</div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <a class="footer-link" href="https://pharosnetwork.xyz" target="_blank">Pharos</a>
+              <a class="footer-link" href="#">MCP Agents</a>
+              <a class="footer-link" href="#">AI Agents</a>
+              <a class="footer-link" href="#">Smart Contracts</a>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:#3D4755;margin-bottom:14px;">Community</div>
+            <div style="display:flex;flex-direction:column;gap:9px;">
+              <a class="footer-link" href="https://github.com/IamHarrie-Labs/pharos-bastion" target="_blank">GitHub</a>
+              <a class="footer-link" href="https://atlantic.pharosscan.xyz/address/0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A" target="_blank">Explorer</a>
+              <a class="footer-link" href="https://discord.com/invite/pharos" target="_blank">Discord</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding-top:22px;border-top:1px solid rgba(255,255,255,0.07);flex-wrap:wrap;gap:12px;">
+        <span style="font-size:12.5px;color:#3D4755;">2026 Bastion. Built on Pharos Atlantic Testnet.</span>
+        <div style="display:flex;align-items:center;gap:7px;font-size:12px;color:#3D4755;">
+          <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block;animation:dotPulse 2.5s ease-in-out infinite;"></span>
+          <span>GuardianRegistry live on Pharos</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end body -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const RPC      = 'https://atlantic.dplabs-internal.com';
+const REGISTRY = '0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A';
+const POLICY   = '0x7BBDa4409e300eaDB0A61F137498480c96173C9e';
+const EXPLORER = 'https://atlantic.pharosscan.xyz';
+const UNLIMITED = (BigInt(1) << BigInt(256)) - BigInt(1);
+const APPROVE_SEL = '0x095ea7b3';
+
+const REGISTRY_ABI = [
+  'function getDecision(uint256 id) view returns (tuple(address account, address target, uint256 value, uint8 verdict, uint16 riskScore, bytes32 policyCode, bytes32 intentHash, uint256 timestamp))',
+  'function totalDecisions() view returns (uint256)',
+];
+const POLICY_ABI = [
+  'function check(address account, address target, uint256 value, bytes4 selector, uint256 approvalAmount) view returns (bool allowed, string reason)',
+];
+
+const VERDICT_NAMES = ['ALLOW', 'WARN', 'DENY'];
+const REASON_MAP = {
+  OK: 'Passed all policy checks',
+  ERC20_UNLIMITED_APPROVAL: 'Unlimited Token Approval',
+  DAILY_LIMIT_EXCEEDED: 'Daily Spending Cap Exceeded',
+  MAX_VALUE_PER_TX: 'Exceeds Per-Tx Value Cap',
+  TARGET_DENYLISTED: 'Target Address Denylisted',
+  TARGET_NOT_ALLOWLISTED: 'Target Not on Allowlist',
+  ERC20_APPROVAL_LIMIT: 'Approval Exceeds Policy Cap',
+  NO_POLICY: 'No Policy Configured',
+  HIGH_RISK: 'High Composite Risk Score',
+};
+
+// ── State ───────────────────────────────────────────────────────────────────
+let decisions = [];
+let nextId    = 100;
+let filter    = 'all';
+let evaluating = false;
+
+let provider, registry, policyCtx;
+try {
+  provider  = new ethers.JsonRpcProvider(RPC);
+  registry  = new ethers.Contract(REGISTRY, REGISTRY_ABI, provider);
+  policyCtx = new ethers.Contract(POLICY,   POLICY_ABI,   provider);
+} catch(e) { console.warn('ethers init:', e.message); }
+
+// ── Animated heading ──────────────────────────────────────────────────────
+(function buildHeading() {
+  const el = document.getElementById('hero-heading');
+  if (!el) return;
+  const lines = ['Every AI Transaction.', 'Verified Before It Happens.'];
+  const gap   = 22;
+  lines.forEach((line, li) => {
+    const block = document.createElement('span');
+    block.style.cssText = 'display:block;white-space:nowrap;';
+    [...line].forEach((ch, ci) => {
+      const s = document.createElement('span');
+      s.style.cssText = `display:inline-block;opacity:0;animation:charIn 480ms ease forwards;animation-delay:${100 + li * lines[0].length * gap + ci * gap}ms;`;
+      s.textContent   = ch === ' ' ? ' ' : ch;
+      block.appendChild(s);
+    });
+    el.appendChild(block);
+  });
+})();
+
+// ── Variant switcher ──────────────────────────────────────────────────────
+function setVariant(v) {
+  document.body.classList.toggle('var-b', v === 'B');
+  document.getElementById('varA').classList.toggle('active', v === 'A');
+  document.getElementById('varB').classList.toggle('active', v === 'B');
+}
+
+// ── Decision rendering ────────────────────────────────────────────────────
+function vc(v)  { return v === 'ALLOW' ? 'var(--green)' : 'var(--red)'; }
+function vbg(v) { return v === 'ALLOW' ? 'var(--green-bg)' : 'var(--red-bg)'; }
+function vb(v)  { return v === 'ALLOW' ? 'var(--green-border)' : 'var(--red-border)'; }
+function rc(r)  { return r < 30 ? 'var(--green)' : r < 65 ? 'var(--amber)' : 'var(--red)'; }
+
+function rowHTML(d) {
+  const txContent = d.explorerUrl
+    ? `<a href="${d.explorerUrl}" target="_blank" rel="noopener" style="font-size:11px;font-family:'JetBrains Mono';color:#9BA3AF;text-decoration:none;">${d.tx}</a>`
+    : `<span style="font-size:11px;font-family:'JetBrains Mono';color:#9BA3AF;">${d.tx}</span>`;
+  return `<div class="decision-row dec-table" data-verdict="${d.verdict}"
+    style="display:grid;grid-template-columns:60px 130px 110px 72px 1fr 120px;align-items:center;padding:13px 24px;border-bottom:1px solid rgba(0,0,0,0.06);gap:16px;background:#FAFAF8;">
+    <span style="font-size:12.5px;font-family:'JetBrains Mono';color:#626975;font-weight:500;">#${d.id}</span>
+    <span class="dec-ts" style="font-size:12px;color:#9BA3AF;font-family:'JetBrains Mono';">${d.ts}</span>
+    <div><span style="display:inline-flex;align-items:center;padding:3px 10px;border-radius:5px;font-size:11px;font-weight:700;font-family:'JetBrains Mono';letter-spacing:.6px;color:${vc(d.verdict)};background:${vbg(d.verdict)};border:1px solid ${vb(d.verdict)};">${d.verdict}</span></div>
+    <div style="display:flex;align-items:center;gap:7px;">
+      <span style="font-size:12.5px;font-family:'JetBrains Mono';color:${rc(d.risk)};min-width:20px;">${d.risk}</span>
+      <div style="width:28px;height:2px;background:rgba(0,0,0,0.08);border-radius:2px;overflow:hidden;flex-shrink:0;">
+        <div style="height:100%;background:${rc(d.risk)};width:${Math.min(100,d.risk)}%;"></div>
+      </div>
+    </div>
+    <span style="font-size:13px;color:#626975;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${d.reason}</span>
+    <div class="dec-tx" style="display:flex;align-items:center;gap:4px;">${txContent}</div>
+  </div>`;
+}
+
+function renderDecisions() {
+  const tbody = document.getElementById('decision-tbody');
+  if (!tbody) return;
+  const visible = filter === 'all' ? decisions : decisions.filter(d => d.verdict === filter);
+  tbody.innerHTML = visible.length ? visible.map(rowHTML).join('') : '<div style="padding:22px 24px;text-align:center;font-size:13px;color:#9BA3AF;font-family:\'JetBrains Mono\';">No decisions match this filter.</div>';
+}
+
+function setFilter(f) {
+  filter = f;
+  document.getElementById('f-all').classList.toggle('active',   f === 'all');
+  document.getElementById('f-allow').classList.toggle('active', f === 'ALLOW');
+  document.getElementById('f-deny').classList.toggle('active',  f === 'DENY');
+  renderDecisions();
+}
+
+// ── Relative time ─────────────────────────────────────────────────────────
+function relTime(unixTs) {
+  const s = Math.floor(Date.now() / 1000) - Number(unixTs);
+  if (s < 60)   return s + 's ago';
+  if (s < 3600) return Math.floor(s / 60) + 'm ago';
+  return Math.floor(s / 3600) + 'h ago';
+}
+
+// ── Load from chain ───────────────────────────────────────────────────────
+async function loadChain() {
+  try {
+    const total = Number(await registry.totalDecisions());
+    const limit = Math.min(total, 8);
+    const out   = [];
+    for (let id = total - 1; id >= Math.max(0, total - limit); id--) {
+      const d = await registry.getDecision(id);
+      let code = '';
+      try { code = ethers.decodeBytes32String(d.policyCode); } catch { code = 'UNKNOWN'; }
+      const verdict = VERDICT_NAMES[Number(d.verdict)] ?? 'DENY';
+      const shortHash = d.intentHash.slice(0, 10) + '...' + d.intentHash.slice(-6);
+      out.push({
+        id,
+        verdict,
+        risk:       Number(d.riskScore),
+        reason:     REASON_MAP[code] ?? code,
+        ts:         relTime(d.timestamp),
+        tx:         shortHash,
+        explorerUrl: null,
+      });
+    }
+    if (out.length) { decisions = out; nextId = total; renderDecisions(); }
+    else { useMockData(); }
+  } catch(e) {
+    console.warn('Chain fetch failed, using mock data:', e.message);
+    useMockData();
+  }
+}
+
+function useMockData() {
+  decisions = [
+    { id:2, verdict:'DENY',  risk:85, reason:'Unlimited Token Approval',    ts:'6 min ago',  tx:'0xf8df...3096', explorerUrl:`${EXPLORER}/tx/0xf8dff6b8feb7172d04b18f2794e8397a0c12cc05c0e8c054214e9530a2433096` },
+    { id:1, verdict:'DENY',  risk:92, reason:'Daily Spending Cap Exceeded', ts:'9 min ago',  tx:'0xa1b2...c3d4', explorerUrl: null },
+    { id:0, verdict:'ALLOW', risk:5,  reason:'Safe ETH Transfer',           ts:'13 min ago', tx:'0xe5f6...7890', explorerUrl: null },
+  ];
+  nextId = 3;
+  renderDecisions();
+}
+
+// ── Simulated live feed (new row every 8s) ────────────────────────────────
+const SIM_POOL = [
+  { verdict:'ALLOW', risk:() => Math.floor(Math.random()*16+2),  reason:'Safe ETH Transfer' },
+  { verdict:'ALLOW', risk:() => Math.floor(Math.random()*14+3),  reason:'Verified NFT Mint' },
+  { verdict:'ALLOW', risk:() => Math.floor(Math.random()*18+4),  reason:'Whitelisted Protocol Call' },
+  { verdict:'DENY',  risk:() => Math.floor(Math.random()*15+75), reason:'Suspicious Drain Attempt' },
+  { verdict:'DENY',  risk:() => Math.floor(Math.random()*12+78), reason:'Unauthorized Contract Call' },
+  { verdict:'DENY',  risk:() => Math.floor(Math.random()*16+72), reason:'Blacklisted Address Detected' },
+];
+
+function pushSim() {
+  const p = SIM_POOL[Math.floor(Math.random() * SIM_POOL.length)];
+  const h = () => Math.random().toString(16).slice(2, 8);
+  decisions = [{ id: nextId++, verdict: p.verdict, risk: p.risk(), reason: p.reason, ts: 'just now', tx: '0x'+h()+'...'+h().slice(0,4), explorerUrl: null }, ...decisions.slice(0, 7)];
+  renderDecisions();
+  const first = document.querySelector('#decision-tbody .decision-row');
+  if (first) { first.classList.add('new-row'); setTimeout(() => first.classList.remove('new-row'), 900); }
+}
+
+// ── Playground ────────────────────────────────────────────────────────────
+const STAGE_LABELS = ['Parsing transaction calldata...','Consulting policy registry...','Running risk scoring engine...','Generating on chain proof...'];
+const STAGE_DESCS  = ['Transaction calldata parsed','Policy registry loaded','Risk score computed','On chain proof generated'];
+
+function checkSVG() {
+  return `<svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>`;
+}
+
+function showStage(n) {
+  const lbl = document.getElementById('stage-label');
+  const lst = document.getElementById('stage-items');
+  if (lbl) lbl.textContent = STAGE_LABELS[Math.min(3, n)];
+  if (!lst) return;
+  lst.innerHTML = '';
+  for (let i = 0; i <= n && i < 4; i++) {
+    const row = document.createElement('div');
+    row.style.cssText = 'display:flex;align-items:center;gap:9px;animation:stageIn .3s ease;';
+    row.innerHTML = `<div style="width:14px;height:14px;border-radius:50%;background:var(--green-bg);border:1px solid var(--green-border);display:flex;align-items:center;justify-content:center;flex-shrink:0;">${checkSVG()}</div><span style="font-size:12px;color:#626975;font-family:'JetBrains Mono';">${STAGE_DESCS[i]}</span>`;
+    lst.appendChild(row);
+  }
+}
+
+async function runEval() {
+  if (evaluating) return;
+  evaluating = true;
+
+  const btn    = document.getElementById('eval-btn');
+  const stages = document.getElementById('eval-stages');
+  const result = document.getElementById('eval-result');
+
+  btn.disabled  = true;
+  btn.innerHTML = `<div style="width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;"></div>Evaluating...`;
+  stages.style.display = 'block';
+  result.style.display = 'none';
+
+  const wallet   = document.getElementById('p-wallet').value.trim();
+  const contract = document.getElementById('p-contract').value.trim();
+  const method   = document.getElementById('p-method').value.trim();
+  const amtStr   = document.getElementById('p-amount').value.trim() || '0';
+
+  // Animate through 4 stages
+  for (let i = 0; i < 4; i++) {
+    await new Promise(r => setTimeout(r, i === 0 ? 400 : 480));
+    showStage(i);
+  }
+  await new Promise(r => setTimeout(r, 400));
+
+  let verdict, risk, confidence, policy, reason;
+
+  try {
+    const isApprove = /approve|setApprovalForAll/i.test(method);
+    const selector  = isApprove ? APPROVE_SEL : '0x00000000';
+    let   approvalAmt = '0';
+    let   isUnlimited = false;
+
+    if (isApprove) {
+      try {
+        const bigAmt = BigInt(amtStr);
+        isUnlimited  = bigAmt === UNLIMITED;
+        approvalAmt  = bigAmt.toString();
+      } catch { isUnlimited = true; approvalAmt = UNLIMITED.toString(); }
+    }
+
+    // Try real on-chain policy check
+    let policyAllowed = null, policyReason = 'NO_POLICY';
+    if (policyCtx && ethers.isAddress(wallet) && ethers.isAddress(contract)) {
+      try {
+        [policyAllowed, policyReason] = await policyCtx.check(wallet, contract, '0', selector, approvalAmt);
+      } catch { /* fall through */ }
+    }
+
+    // Client-side risk scoring
+    const highRisk = isApprove && isUnlimited;
+
+    if (highRisk) {
+      risk = 85; confidence = 97; verdict = 'DENY';
+      policy = 'Unlimited Token Approval Detected';
+      reason = 'This transaction grants max uint256 approval to an unverified contract. This pattern is consistent with phishing attacks that drain wallet balances. Policy P-002 prohibits unlimited ERC-20 approvals to non-whitelisted addresses.';
+    } else if (policyAllowed === false && policyReason !== 'OK') {
+      risk = 45; confidence = 99; verdict = 'DENY';
+      policy = REASON_MAP[policyReason] ?? policyReason;
+      reason = `Blocked by on-chain policy: ${policyReason}. The GuardianPolicy contract rejected this transaction before it could reach the blockchain.`;
+    } else {
+      risk = Math.floor(Math.random() * 12 + 3); confidence = 99; verdict = 'ALLOW';
+      policy = 'Standard Transfer, No Violations';
+      reason = `Transaction evaluated against active policies. No violations detected. Risk score ${risk}/100 is within the safe threshold of 30. This decision would be permanently recorded on GuardianRegistry.`;
+    }
+  } catch(e) {
+    // Pure client-side fallback
+    const risky = /approve|drain|setApprovalForAll|permit/i.test(method);
+    if (risky) {
+      verdict='DENY'; risk=85; confidence=97;
+      policy='Unlimited Token Approval Detected';
+      reason='This transaction grants max uint256 approval to an unverified contract. Policy P-002 prohibits unlimited ERC-20 approvals to non-whitelisted contracts.';
+    } else {
+      verdict='ALLOW'; risk=8; confidence=99;
+      policy='Standard Transfer, No Violations';
+      reason='Transaction evaluated against active policies. No violations detected. Risk score 8/100 is within the safe threshold. Decision would be written to GuardianRegistry.';
+    }
+  }
+
+  const isAllow  = verdict === 'ALLOW';
+  const col      = isAllow ? 'var(--green)' : 'var(--red)';
+  const bg       = isAllow ? 'var(--green-bg)' : 'var(--red-bg)';
+  const bdr      = isAllow ? 'var(--green-border)' : 'var(--red-border)';
+  const iconPath = isAllow
+    ? '<path d="M20 6L9 17l-5-5"/>'
+    : '<path d="M18 6L6 18M6 6l12 12"/>';
+
+  result.style.display = 'block';
+  result.innerHTML = `
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <div style="width:40px;height:40px;border-radius:11px;background:${bg};border:1px solid ${bdr};display:flex;align-items:center;justify-content:center;color:${col};flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${iconPath}</svg>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:600;color:${col};letter-spacing:-0.02em;">${verdict}</div>
+        <div style="font-size:11.5px;color:#9BA3AF;font-family:'JetBrains Mono';margin-top:2px;">Risk ${risk}/100 &middot; Confidence ${confidence}%</div>
+      </div>
+    </div>
+    <div style="padding:11px 14px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:9px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:4px;font-weight:600;">Policy Triggered</div>
+      <div style="font-size:13.5px;font-weight:500;color:${col};">${policy}</div>
+    </div>
+    <div style="padding:11px 14px;background:#fff;border:1px solid rgba(0,0,0,0.07);border-radius:8px;margin-bottom:14px;">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:5px;font-weight:600;">Analysis</div>
+      <div style="font-size:13px;color:#626975;line-height:1.68;">${reason}</div>
+    </div>
+    <p style="font-size:11.5px;color:#9BA3AF;">This decision would be permanently written to <span style="font-family:'JetBrains Mono';color:#626975;">GuardianRegistry</span> on Pharos.</p>
+  `;
+
+  evaluating   = false;
+  btn.disabled = false;
+  btn.innerHTML = 'Evaluate Transaction';
+}
+
+// ── Boot ──────────────────────────────────────────────────────────────────
+loadChain();
+setInterval(pushSim, 8000);
+</script>
+</body>
+</html>

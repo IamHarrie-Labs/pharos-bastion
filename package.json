@@ -1,0 +1,29 @@
+{
+  "name": "pharos-bastion",
+  "version": "0.1.0",
+  "description": "Pharos Bastion — the trusted execution layer for autonomous on-chain agents. An MCP skill that simulates, risk-scores, policy-checks, executes, and explains every agent transaction before it reaches Pharos.",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "deploy": "hardhat run scripts/deploy.ts --network pharos",
+    "demo": "tsx scripts/demo.ts",
+    "mcp": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.4",
+    "dotenv": "^16.4.7",
+    "ethers": "^6.13.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@openzeppelin/contracts": "^5.1.0",
+    "@types/node": "^22.10.2",
+    "hardhat": "^2.22.17",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}

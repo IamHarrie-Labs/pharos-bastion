@@ -1,0 +1,9 @@
+node_modules/
+dist/
+cache/
+artifacts/
+typechain-types/
+.env
+deployments.json
+*.log
+.DS_Store
