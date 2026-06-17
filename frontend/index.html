@@ -262,6 +262,16 @@
           <div style="padding:28px;">
             <div style="display:flex;flex-direction:column;gap:14px;margin-bottom:18px;">
               <div>
+                <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Scenario</label>
+                <select id="p-scenario" class="input-field" onchange="onScenarioChange()" style="cursor:pointer;appearance:none;background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239BA3AF' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E\");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px;">
+                  <option value="unlimited_approval">⛔ Unlimited ERC-20 Approval → DENY</option>
+                  <option value="safe_native">✅ Safe Native Transfer → ALLOW</option>
+                  <option value="bounded_approval">⚠️ Large Bounded Approval → WARN</option>
+                  <option value="eoa_calldata">⛔ Calldata to EOA → DENY</option>
+                  <option value="custom">✏️ Custom</option>
+                </select>
+              </div>
+              <div>
                 <label style="display:block;font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:.7px;color:#9BA3AF;margin-bottom:7px;">Agent Wallet</label>
                 <input id="p-from" class="input-field" placeholder="0x..." value="0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146">
               </div>
@@ -542,7 +552,55 @@ function useMockData() {
   renderDecisions();
 }
 
-// ── Playground ────────────────────────────────────────────────────────────
+// ── Scenarios ─────────────────────────────────────────────────────────────
+const SCENARIOS = {
+  unlimited_approval: {
+    from:    '0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146',
+    to:      '0x7BBDa4409e300eaDB0A61F137498480c96173C9e',
+    action:  'approve',
+    amount:  '115792089237316195423570985008687907853269984665640564039457584007913129639935',
+    spender: '0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A',
+  },
+  safe_native: {
+    from:    '0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146',
+    to:      '0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A',
+    action:  'native',
+    amount:  '10000000000000000',
+    spender: '',
+  },
+  bounded_approval: {
+    from:    '0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146',
+    to:      '0x7BBDa4409e300eaDB0A61F137498480c96173C9e',
+    action:  'approve',
+    amount:  '50000000000000000000000',
+    spender: '0x44C97e79E4f6b9cD5065bEDc577C9B74bF9e523A',
+  },
+  eoa_calldata: {
+    from:    '0x1c2B8137c0C5bf49EB03D4be3A7F8577e82bF146',
+    to:      '0x000000000000000000000000000000000000dEaD',
+    action:  'transfer',
+    amount:  '1000000000000000000',
+    spender: '0x000000000000000000000000000000000000dEaD',
+  },
+};
+
+function onScenarioChange() {
+  const key = document.getElementById('p-scenario').value;
+  if (key === 'custom') return;
+  const s = SCENARIOS[key];
+  if (!s) return;
+  document.getElementById('p-from').value    = s.from;
+  document.getElementById('p-to').value      = s.to;
+  document.getElementById('p-action').value  = s.action;
+  document.getElementById('p-amount').value  = s.amount;
+  document.getElementById('p-spender').value = s.spender;
+  onActionChange();
+  // clear any previous result
+  document.getElementById('eval-result').style.display = 'none';
+  document.getElementById('eval-stages').style.display = 'none';
+}
+
+// ── Playground ─────────────────────────────────────────────────────────────
 function onActionChange() {
   const action     = document.getElementById('p-action').value;
   const spRow      = document.getElementById('p-spender-row');
