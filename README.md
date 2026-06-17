@@ -131,7 +131,9 @@ npm run api
 npx serve frontend -p 3456
 ```
 
-Open `http://localhost:3456` → scroll to **Try Bastion** → click **Evaluate Transaction**.
+**Live demo:** [https://frontend-beige-five-14.vercel.app](https://frontend-beige-five-14.vercel.app)
+
+Or run locally: open `http://localhost:3456` → scroll to **Try Bastion** → click **Evaluate Transaction**.
 
 The pre-filled scenario (unlimited ERC-20 approval) runs the full pipeline against Pharos Atlantic and returns a live DENY with simulation details, risk factors, on-chain policy reason, and a recommended fix.
 
