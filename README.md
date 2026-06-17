@@ -131,7 +131,7 @@ npm run api
 npx serve frontend -p 3456
 ```
 
-**Live demo:** [https://frontend-beige-five-14.vercel.app](https://frontend-beige-five-14.vercel.app)
+**Live demo:** [https://trybastion.vercel.app](https://trybastion.vercel.app)
 
 Or run locally: open `http://localhost:3456` → scroll to **Try Bastion** → click **Evaluate Transaction**.
 
