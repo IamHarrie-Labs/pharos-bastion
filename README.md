@@ -121,7 +121,39 @@ Claude Desktop / any MCP client config:
 }
 ```
 
-### Run the REST API + frontend demo
+### REST API — deployed (no setup required)
+
+The API is live at `https://pharos-bastion.onrender.com`. No key needed for read-only calls.
+
+```bash
+# Evaluate a transaction
+curl -X POST https://pharos-bastion.onrender.com/guard \
+  -H "Content-Type: application/json" \
+  -d '{
+    "from": "0xYourAgentWallet",
+    "to":   "0xTargetContract",
+    "value": "0",
+    "data": "0x095ea7b3000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+  }'
+
+# Read recent on-chain decisions
+curl https://pharos-bastion.onrender.com/audit?limit=5
+
+# Health check
+curl https://pharos-bastion.onrender.com/health
+```
+
+**Endpoints:**
+
+| Method | Path | Description |
+|---|---|---|
+| `POST` | `/guard` | Evaluate `{ from, to, value, data }` → full `GuardDecision` |
+| `GET` | `/audit` | Recent on-chain decisions from GuardianRegistry |
+| `GET` | `/health` | Status check |
+
+**Live playground:** [https://trybastion.vercel.app](https://trybastion.vercel.app) — runs the full pipeline in the browser, no setup.
+
+### Run the REST API + frontend locally
 
 ```bash
 # Terminal 1 — API server (port 3457)
@@ -131,19 +163,9 @@ npm run api
 npx serve frontend -p 3456
 ```
 
-**Live demo:** [https://trybastion.vercel.app](https://trybastion.vercel.app)
-
-Or run locally: open `http://localhost:3456` → scroll to **Try Bastion** → click **Evaluate Transaction**.
+Open `http://localhost:3456` → scroll to **Try Bastion** → click **Evaluate Transaction**.
 
 The pre-filled scenario (unlimited ERC-20 approval) runs the full pipeline against Pharos Atlantic and returns a live DENY with simulation details, risk factors, on-chain policy reason, and a recommended fix.
-
-**REST API endpoints:**
-
-| Method | Path | Description |
-|---|---|---|
-| `POST` | `/guard` | Evaluate `{ from, to, value, data }` → full `GuardDecision` |
-| `GET` | `/audit` | Recent on-chain decisions from GuardianRegistry |
-| `GET` | `/health` | Status check |
 
 ---
 
